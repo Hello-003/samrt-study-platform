@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Study Material Access Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            color: white;
+            width: 100%;
+        }
+        
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .input-section {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .input-section h2 {
+            color: #2575fc;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            border-color: #2575fc;
+            outline: none;
+        }
+        
+        .delivery-options {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .delivery-option {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .delivery-option.selected {
+            border-color: #2575fc;
+            background-color: #f0f7ff;
+        }
+        
+        .delivery-option i {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #2575fc;
+        }
+        
+        .btn {
+            background: #2575fc;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn:hover {
+            background: #1c64e0;
+        }
+        
+        .btn:disabled {
+            background: #a0a0a0;
+            cursor: not-allowed;
+        }
+        
+        .materials-section h2 {
+            color: #2575fc;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .material-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .material-item:hover {
+            background: #f9f9f9;
+        }
+        
+        .material-item:last-child {
+            border-bottom: none;
+        }
+        
+        .material-icon {
+            width: 50px;
+            height: 50px;
+            background: #f0f7ff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #2575fc;
+            font-size: 20px;
+        }
+        
+        .material-info h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .material-info p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .tech-stack {
+            text-align: center;
+            padding: 30px 0;
+            color: white;
+        }
+        
+        .tech-stack h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+        
+        .tech-icons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .tech-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 120px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tech-item i {
+            font-size: 40px;
+            color: #2575fc;
+            margin-bottom: 10px;
+        }
+        
+        .tech-item p {
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateX(100%);
+            transition: transform 0.3s;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification.success {
+            background: #4ade80;
+        }
+        
+        .notification.error {
+            background: #f87171;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            margin-top: auto;
+            width: 100%;
+        }
+        
+        .material-preview {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .material-preview h3 {
+            margin-bottom: 15px;
+            color: #2575fc;
+        }
+        
+        .preview-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .preview-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .preview-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .preview-item i {
+            font-size: 24px;
+            color: #2575fc;
+            margin-bottom: 10px;
+        }
+        
+        .loader {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            display: none;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .btn .loader {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SMART STUDY MATERIAL ACCESS PLATFORM</h1>
+            <p>Access your course materials instantly with just your student ID. No more struggling to find study resources!</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="card input-section">
+                <h2>Get Your Study Materials</h2>
+                
+                <div class="form-group">
+                    <label for="studentId">Student ID</label>
+                    <input type="text" id="studentId" placeholder="Enter your student ID">
+                </div>
+                
+                <div class="form-group">
+                    <label for="courseSelect">Select Course</label>
+                    <select id="courseSelect">
+                        <option value="">-- Select a course --</option>
+                        <option value="cs101">Computer Science 101</option>
+                        <option value="math201">Mathematics 201</option>
+                        <option value="phy301">Physics 301</option>
+                        <option value="eng401">Engineering 401</option>
+                        <option value="mba501">Business Administration 501</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Delivery Method</label>
+                    <div class="delivery-options">
+                        <div class="delivery-option selected" id="emailOption">
+                            <i class="fas fa-envelope"></i>
+                            <p>Email</p>
+                        </div>
+                        <div class="delivery-option" id="whatsappOption">
+                            <i class="fab fa-whatsapp"></i>
+                            <p>WhatsApp</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="emailField">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="Enter your email address">
+                </div>
+                
+                <div class="form-group" id="whatsappField" style="display: none;">
+                    <label for="whatsapp">WhatsApp Number</label>
+                    <input type="tel" id="whatsapp" placeholder="Enter your WhatsApp number with country code">
+                </div>
+                
+                <button class="btn" id="submitBtn">
+                    <span>Get Materials</span>
+                    <div class="loader" id="btnLoader"></div>
+                </button>
+                
+                <div class="material-preview" id="materialPreview">
+                    <h3>Available Materials for <span id="previewCourseName"></span></h3>
+                    <div class="preview-content" id="previewContent">
+                        <!-- Preview items will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card materials-section">
+                <h2>Available Materials</h2>
+                
+                <div class="material-item" data-course="cs101">
+                    <div class="material-icon">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <div class="material-info">
+                        <h3>Computer Science 101</h3>
+                        <p>Programming fundamentals, algorithms, data structures</p>
+                    </div>
+                </div>
+                
+                <div class="material-item" data-course="math201">
+                    <div class="material-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div class="material-info">
+                        <h3>Mathematics 201</h3>
+                        <p>Calculus, linear algebra, differential equations</p>
+                    </div>
+                </div>
+                
+                <div class="material-item" data-course="phy301">
+                    <div class="material-icon">
+                        <i class="fas fa-atom"></i>
+                    </div>
+                    <div class="material-info">
+                        <h3>Physics 301</h3>
+                        <p>Classical mechanics, electromagnetism, thermodynamics</p>
+                    </div>
+                </div>
+                
+                <div class="material-item" data-course="eng401">
+                    <div class="material-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <div class="material-info">
+                        <h3>Engineering 401</h3>
+                        <p>Advanced engineering principles and applications</p>
+                    </div>
+                </div>
+                
+                <div class="material-item" data-course="mba501">
+                    <div class="material-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="material-info">
+                        <h3>Business Administration 501</h3>
+                        <p>Management, finance, marketing strategies</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tech-stack">
+            <h2>Our Technology Stack</h2>
+            <div class="tech-icons">
+                <div class="tech-item">
+                    <i class="fab fa-react"></i>
+                    <p>React/Next.js</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fab fa-node-js"></i>
+                    <p>Node.js/Flask</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fab fa-whatsapp"></i>
+                    <p>WhatsApp API</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-envelope"></i>
+                    <p>Email API</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-database"></i>
+                    <p>MySQL/Firebase</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Materials sent successfully!</span>
+    </div>
+    
+    <footer>
+        <p>© 2025 Smart Study Material Access Platform. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Initialize EmailJS with your public key
+        // You need to create an account at https://www.emailjs.com/ and get your own keys
+        (function() {
+            emailjs.init("YOUR_PUBLIC_KEY"); // Replace with your actual EmailJS public key
+        })();
+        
+        // DOM Elements
+        const emailOption = document.getElementById('emailOption');
+        const whatsappOption = document.getElementById('whatsappOption');
+        const emailField = document.getElementById('emailField');
+        const whatsappField = document.getElementById('whatsappField');
+        const submitBtn = document.getElementById('submitBtn');
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+        const btnLoader = document.getElementById('btnLoader');
+        const materialPreview = document.getElementById('materialPreview');
+        const previewCourseName = document.getElementById('previewCourseName');
+        const previewContent = document.getElementById('previewContent');
+        const courseSelect = document.getElementById('courseSelect');
+        const materialItems = document.querySelectorAll('.material-item');
+        
+        // Course data with materials
+        const courseMaterials = {
+            cs101: {
+                name: "Computer Science 101",
+                materials: [
+                    { name: "Lecture Notes", type: "pdf", icon: "file-pdf" },
+                    { name: "Programming Exercises", type: "zip", icon: "file-archive" },
+                    { name: "Video Lectures", type: "video", icon: "video" },
+                    { name: "Textbook PDF", type: "pdf", icon: "book" },
+                    { name: "Assignment Solutions", type: "pdf", icon: "tasks" }
+                ]
+            },
+            math201: {
+                name: "Mathematics 201",
+                materials: [
+                    { name: "Lecture Slides", type: "pdf", icon: "file-pdf" },
+                    { name: "Practice Problems", type: "pdf", icon: "pen" },
+                    { name: "Formula Sheet", type: "pdf", icon: "file-alt" },
+                    { name: "Video Solutions", type: "video", icon: "video" }
+                ]
+            },
+            phy301: {
+                name: "Physics 301",
+                materials: [
+                    { name: "Lab Manual", type: "pdf", icon: "flask" },
+                    { name: "Lecture Notes", type: "pdf", icon: "file-pdf" },
+                    { name: "Simulation Software", type: "exe", icon: "desktop" },
+                    { name: "Problem Sets", type: "pdf", icon: "pen" }
+                ]
+            },
+            eng401: {
+                name: "Engineering 401",
+                materials: [
+                    { name: "Project Guidelines", type: "pdf", icon: "project-diagram" },
+                    { name: "CAD Files", type: "zip", icon: "cube" },
+                    { name: "Reference Materials", type: "pdf", icon: "book" },
+                    { name: "Case Studies", type: "pdf", icon: "file-alt" }
+                ]
+            },
+            mba501: {
+                name: "Business Administration 501",
+                materials: [
+                    { name: "Case Studies", type: "pdf", icon: "briefcase" },
+                    { name: "Lecture Slides", type: "pdf", icon: "file-powerpoint" },
+                    { name: "Financial Models", type: "excel", icon: "file-excel" },
+                    { name: "Reading Materials", type: "pdf", icon: "book-reader" }
+                ]
+            }
+        };
+        
+        // Delivery option selection
+        emailOption.addEventListener('click', () => {
+            emailOption.classList.add('selected');
+            whatsappOption.classList.remove('selected');
+            emailField.style.display = 'block';
+            whatsappField.style.display = 'none';
+        });
+        
+        whatsappOption.addEventListener('click', () => {
+            whatsappOption.classList.add('selected');
+            emailOption.classList.remove('selected');
+            whatsappField.style.display = 'block';
+            emailField.style.display = 'none';
+        });
+        
+        // Show materials when course is selected
+        courseSelect.addEventListener('change', () => {
+            const courseId = courseSelect.value;
+            if (courseId && courseMaterials[courseId]) {
+                showMaterialPreview(courseId);
+            } else {
+                materialPreview.style.display = 'none';
+            }
+        });
+        
+        // Show materials when clicking on course in the list
+        materialItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const courseId = item.getAttribute('data-course');
+                courseSelect.value = courseId;
+                showMaterialPreview(courseId);
+            });
+        });
+        
+        // Function to show material preview
+        function showMaterialPreview(courseId) {
+            const course = courseMaterials[courseId];
+            previewCourseName.textContent = course.name;
+            
+            // Clear previous content
+            previewContent.innerHTML = '';
+            
+            // Add materials to preview
+            course.materials.forEach(material => {
+                const materialEl = document.createElement('div');
+                materialEl.className = 'preview-item';
+                materialEl.innerHTML = `
+                    <i class="fas fa-${material.icon}"></i>
+                    <p>${material.name}</p>
+                `;
+                previewContent.appendChild(materialEl);
+            });
+            
+            materialPreview.style.display = 'block';
+        }
+        
+        // Form submission
+        submitBtn.addEventListener('click', async () => {
+            const studentId = document.getElementById('studentId').value;
+            const courseId = document.getElementById('courseSelect').value;
+            
+            if (!studentId) {
+                showNotification('Please enter your Student ID', 'error');
+                return;
+            }
+            
+            if (!courseId) {
+                showNotification('Please select a course', 'error');
+                return;
+            }
+            
+            // Get course data
+            const course = courseMaterials[courseId];
+            
+            if (emailOption.classList.contains('selected')) {
+                const email = document.getElementById('email').value;
+                if (!validateEmail(email)) {
+                    showNotification('Please enter a valid email address', 'error');
+                    return;
+                }
+                
+                // Send via Email
+                await sendViaEmail(studentId, email, course);
+            } else {
+                const whatsapp = document.getElementById('whatsapp').value;
+                if (!validatePhone(whatsapp)) {
+                    showNotification('Please enter a valid WhatsApp number with country code', 'error');
+                    return;
+                }
+                
+                // Send via WhatsApp
+                await sendViaWhatsApp(studentId, whatsapp, course);
+            }
+        });
+        
+        // Validate email format
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        // Validate phone format (basic validation)
+        function validatePhone(phone) {
+            const re = /^[+]{1}[0-9]{10,15}$/;
+            return re.test(phone);
+        }
+        
+        // Send materials via Email using EmailJS
+        async function sendViaEmail(studentId, email, course) {
+            setLoading(true);
+            
+            try {
+                // Prepare email parameters
+                const templateParams = {
+                    to_email: email,
+                    student_id: studentId,
+                    course_name: course.name,
+                    materials_list: course.materials.map(m => m.name).join(', '),
+                    date: new Date().toLocaleDateString()
+                };
+                
+                // Send email using EmailJS
+                // You need to set up your email template in EmailJS dashboard first
+                const response = await emailjs.send(
+                    'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
+                    'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
+                    templateParams
+                );
+                
+                showNotification(`Materials for ${course.name} sent to your email!`, 'success');
+            } catch (error) {
+                console.error('Email sending failed:', error);
+                showNotification('Failed to send email. Please try again.', 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        // Send materials via WhatsApp
+        async function sendViaWhatsApp(studentId, phone, course) {
+            setLoading(true);
+            
+            try {
+                // Create WhatsApp message
+                const message = `Hello! Here are your study materials for ${course.name}:\n\n` +
+                               `${course.materials.map(m => `• ${m.name}`).join('\n')}\n\n` +
+                               `Student ID: ${studentId}\n` +
+                               `Date: ${new Date().toLocaleDateString()}`;
+                
+                // Encode message for URL
+                const encodedMessage = encodeURIComponent(message);
+                
+                // Create WhatsApp URL
+                const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
+                
+                // Open WhatsApp in a new tab (simulates sending message)
+                window.open(whatsappUrl, '_blank');
+                
+                showNotification(`WhatsApp message prepared for ${course.name}!`, 'success');
+            } catch (error) {
+                console.error('WhatsApp sending failed:', error);
+                showNotification('Failed to prepare WhatsApp message. Please try again.', 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        // Show notification
+        function showNotification(message, type) {
+            notificationText.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Set loading state
+        function setLoading(isLoading) {
+            if (isLoading) {
+                submitBtn.disabled = true;
+                btnLoader.style.display = 'inline-block';
+                submitBtn.querySelector('span').textContent = 'Processing...';
+            } else {
+                submitBtn.disabled = false;
+                btnLoader.style.display = 'none';
+                submitBtn.querySelector('span').textContent = 'Get Materials';
+            }
+        }
+    </script>
+</body>
+</html>
